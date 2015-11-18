@@ -1,0 +1,50 @@
+﻿using System;
+using Owin;
+using Autofac;
+using System.Web;
+using System.Web.Http;
+using Autofac.Integration.Owin;
+using WebApiControllers;
+
+namespace webapi_docker
+{
+	class Startup
+	{
+		//  Hack from http://stackoverflow.com/a/17227764/19020 to load controllers in 
+		//  another assembly.  Another way to do this is to create a custom assembly resolver
+
+		// This code configures Web API. The Startup class is specified as a type
+		// parameter in the WebApp.Start method.
+		public void Configuration(IAppBuilder appBuilder)
+		{
+
+			var builder = new ContainerBuilder();
+
+			builder.RegisterType<HelloController>();
+			// Register dependencies, then...
+			var container = builder.Build();
+
+			// Register the Autofac middleware FIRST. This also adds
+			// Autofac-injected middleware registered with the container.
+			appBuilder.UseAutofacMiddleware(container);
+
+			// ...then register your other middleware not registered
+			// with Autofac.
+			// Configure Web API for self-host. 
+			HttpConfiguration config = new HttpConfiguration();
+
+			//  Enable attribute based routing
+			//  http://www.asp.net/web-api/overview/web-api-routing-and-actions/attribute-routing-in-web-api-2
+			config.MapHttpAttributeRoutes();
+
+			config.Routes.MapHttpRoute(
+				name: "DefaultApi",
+				routeTemplate: "api/{controller}/{id}",
+				defaults: new { id = RouteParameter.Optional }
+			);
+
+			appBuilder.UseWebApi(config);
+		} 
+	}
+}
+
