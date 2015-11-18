@@ -10,6 +10,11 @@ using Owin;
 using System.Web;
 using System.Web.Http;
 using Microsoft.Owin.Hosting;
+using Autofac;
+using Autofac.Integration.Owin;
+using Autofac.Integration.WebApi;
+using System.Reflection;
+
 namespace webapi_docker
 {
 	public class MyOwinService 
@@ -23,11 +28,13 @@ namespace webapi_docker
 		}
 
 		public bool Start() 
-		{ 
-			const string baseAddress = "http://localhost:10281/";
-			_webServer = WebApp.Start<Startup>(url: baseAddress);
-			log.DebugFormat("Loaded webserver at address={0}", baseAddress);
-			return true;
+		{
+
+            string baseUri = "http://*:8080";
+            _webServer = WebApp.Start<Startup>(url: baseUri);
+            Console.WriteLine("Loaded webserver at address={0}", baseUri);
+            Console.WriteLine("I'm running on {0} directly from assembly {1}", Environment.OSVersion, System.Reflection.Assembly.GetEntryAssembly().FullName);
+            return true;
 		}
 
 		public bool Stop() 

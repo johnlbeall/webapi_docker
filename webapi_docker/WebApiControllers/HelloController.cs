@@ -8,29 +8,39 @@ namespace WebApiControllers
 	public class HelloController: ApiController 
 	{ 
 		// GET api/values 
-		public IEnumerable<string> Get() 
+        [HttpGet]
+        [Route("api/hello/")]
+        public IEnumerable<string> Get() 
 		{ 
 			return new string[] { "value1", "value2" }; 
 		} 
 
 		// GET api/values/5 
-		public string Get(int id) 
+        [HttpGet]
+        [Route("api/hello/{id}")]
+        public string Get(int id) 
 		{ 
 			return "value"; 
 		} 
 
 		// POST api/values 
-		public void Post([FromBody]string value) 
+        [HttpPost]
+        [Route("api/hello/")]
+        public void Post([FromBody]string value) 
 		{ 
 		} 
 
 		// PUT api/values/5 
-		public void Put(int id, [FromBody]string value) 
+        [HttpPut]
+        [Route("api/hello/{id}")]
+        public void Put(int id, [FromBody]string value) 
 		{ 
 		} 
 
 		// DELETE api/values/5 
-		public void Delete(int id) 
+        [HttpDelete]
+        [Route("api/hello/{id}")]
+        public void Delete(int id) 
 		{ 
 		} 
 	}

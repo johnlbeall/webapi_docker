@@ -5,6 +5,8 @@ using System.Web;
 using System.Web.Http;
 using Autofac.Integration.Owin;
 using WebApiControllers;
+using System.Reflection;
+using Autofac.Integration.WebApi;
 
 namespace webapi_docker
 {
@@ -18,11 +20,17 @@ namespace webapi_docker
 		public void Configuration(IAppBuilder appBuilder)
 		{
 
-			var builder = new ContainerBuilder();
 
-			builder.RegisterType<HelloController>();
+			var builder = new ContainerBuilder();
+			var config = new HttpConfiguration();
+			builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
+
+
+			builder.RegisterType<HelloController>().InstancePerRequest();
 			// Register dependencies, then...
 			var container = builder.Build();
+
+			config.DependencyResolver = new AutofacWebApiDependencyResolver(container);	
 
 			// Register the Autofac middleware FIRST. This also adds
 			// Autofac-injected middleware registered with the container.
@@ -31,7 +39,7 @@ namespace webapi_docker
 			// ...then register your other middleware not registered
 			// with Autofac.
 			// Configure Web API for self-host. 
-			HttpConfiguration config = new HttpConfiguration();
+
 
 			//  Enable attribute based routing
 			//  http://www.asp.net/web-api/overview/web-api-routing-and-actions/attribute-routing-in-web-api-2
