@@ -7,6 +7,7 @@ using Autofac.Integration.Owin;
 using WebApiControllers;
 using System.Reflection;
 using Autofac.Integration.WebApi;
+using Swashbuckle.Application;
 
 namespace webapi_docker
 {
@@ -51,7 +52,14 @@ namespace webapi_docker
 				defaults: new { id = RouteParameter.Optional }
 			);
 
-			appBuilder.UseWebApi(config);
+            config.EnableSwagger(c =>
+            {
+                c.IncludeXmlComments("docs.xml");
+                c.SingleApiVersion("1.0", "Owin webapi docker");
+            }).EnableSwaggerUi();
+
+
+            appBuilder.UseWebApi(config);
 		} 
 	}
 }
